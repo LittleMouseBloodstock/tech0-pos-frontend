@@ -1,0 +1,7 @@
+.next/
+node_modules/
+.turbo/
+dist/
+out/
+package-lock.json
+
