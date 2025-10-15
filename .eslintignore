@@ -4,3 +4,5 @@ node_modules/
 dist/
 out/
 
+# Temporary scratch files
+components/_tmp.tsx
