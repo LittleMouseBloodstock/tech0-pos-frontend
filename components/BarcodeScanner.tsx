@@ -93,6 +93,25 @@ export default function BarcodeScanner({ onDetected, onClose }: Props): JSX.Elem
             rafRef.current = requestAnimationFrame(tick);
           };
           if (!rafRef.current) rafRef.current = requestAnimationFrame(tick);
+        } else {
+          // Fallback for Safari/iOS or browsers without BarcodeDetector
+          try {
+            const { BrowserMultiFormatReader } = await import("@zxing/browser");
+            const codeReader = new BrowserMultiFormatReader();
+            // Try continuous decode from the existing video element
+            const v = videoRef.current as HTMLVideoElement | null;
+            if (v) {
+              const result = await codeReader.decodeOnceFromVideoElement(v).catch(() => null);
+              if (result && result.getText()) {
+                if (navigator.vibrate) navigator.vibrate(50);
+                onDetected(result.getText());
+                close();
+                return;
+              }
+            }
+          } catch (e) {
+            // ZXing fallback not available; rely on capture button
+          }
         }
       } catch (e) {
         console.error(e);
